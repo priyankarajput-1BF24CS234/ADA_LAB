@@ -1,61 +1,53 @@
 #include <stdio.h>
-#include <stdlib.h>
 
-
-struct Item {
-    int value;
-    int weight;
-};
-
-int compare(const void *a, const void *b) {
-    struct Item *item1 = (struct Item *)a;
-    struct Item *item2 = (struct Item *)b;
-
-    double r1 = (double)item1->value / item1->weight;
-    double r2 = (double)item2->value / item2->weight;
-
-    if (r1 < r2) return 1;
-    else if (r1 > r2) return -1;
-    else return 0;
-}
-
-double fractionalKnapsack(int W, struct Item items[], int n) {
-    qsort(items, n, sizeof(struct Item), compare);
-
-    double totalValue = 0.0;
-
-    for (int i = 0; i < n; i++) {
-        if (items[i].weight <= W) {
-            totalValue += items[i].value;
-            W -= items[i].weight;
-        } else {
-            totalValue += items[i].value * ((double)W / items[i].weight);
-            break;
-        }
-    }
-
-    return totalValue;
-}
-
-int main() {
-    int n, W;
+int main()
+{
+    int n, i, j;
+    float capacity, profit = 0;
 
     printf("Enter number of items: ");
     scanf("%d", &n);
 
-    struct Item items[n];
+    float w[20], p[20], ratio[20];
 
+    printf("Enter weights and profits:\n");
 
-    for (int i = 0; i < n; i++) {
-        printf("Enter value and weight of item %d: ", i + 1);
-        scanf("%d %d", &items[i].value, &items[i].weight);
+    for(i = 0; i < n; i++)
+    {
+        scanf("%f%f", &w[i], &p[i]);
+        ratio[i] = p[i] / w[i];
     }
-    printf("Enter knapsack capacity: ");
-    scanf("%d", &W);
 
-    double maxValue = fractionalKnapsack(W, items, n);
+    
+    for(i = 0; i < n-1; i++)
+        for(j = i+1; j < n; j++)
+            if(ratio[i] < ratio[j])
+            {
+                float t;
+                t = ratio[i]; ratio[i] = ratio[j]; ratio[j] = t;
+                t = w[i]; w[i] = w[j]; w[j] = t;
+                t = p[i]; p[i] = p[j]; p[j] = t;
+            }
 
-    printf("Maximum value in Knapsack = %.2f\n", maxValue);
+    printf("Enter Capacity: ");
+    scanf("%f", &capacity);
+
+    
+    for(i = 0; i < n; i++)
+    {
+        if(capacity >= w[i])
+        {
+            profit += p[i];
+            capacity -= w[i];
+        }
+        else
+        {
+            profit += ratio[i] * capacity;
+            break;
+        }
+    }
+
+    printf("Maximum Profit = %.2f", profit);
 
     return 0;
 }

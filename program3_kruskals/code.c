@@ -1,89 +1,78 @@
 #include <stdio.h>
-#include <stdlib.h>
 
-#define MAX 100
+int parent[10];
 
-struct Edge {
-    int u, v, weight;
-};
-
-int parent[MAX];
-
-// Find function
-int find(int i) {
-    while (parent[i] != i)
+int find(int i)
+{
+    while(parent[i])
         i = parent[i];
     return i;
 }
 
-// Union function
-void unionSet(int u, int v) {
-    int u_root = find(u);
-    int v_root = find(v);
-    parent[u_root] = v_root;
+void union_set(int i, int j)
+{
+    parent[j] = i;
 }
 
-// Compare edges for sorting
-int compare(const void *a, const void *b) {
-    return ((struct Edge*)a)->weight - ((struct Edge*)b)->weight;
-}
+void kruskal(int cost[10][10], int n)
+{
+    int i, j, min, a, b, u, v;
+    int ne = 1, mincost = 0;
 
-// Kruskal function
-void kruskal(struct Edge edges[], int V, int E) {
-    struct Edge result[MAX];
-    int count = 0, i = 0, total = 0;
+    while(ne < n)
+    {
+        min = 999;
 
-    qsort(edges, E, sizeof(edges[0]), compare);
-
-    for (int j = 0; j < V; j++)
-        parent[j] = j;
-
-    while (count < V - 1 && i < E) {
-        int u = edges[i].u;
-        int v = edges[i].v;
-
-        int set_u = find(u);
-        int set_v = find(v);
-
-        if (set_u != set_v) {
-            result[count++] = edges[i];
-            total += edges[i].weight;
-            unionSet(set_u, set_v);
-        }
-        i++;
-    }
-
-    printf("Edge \tWeight\n");
-    for (int i = 0; i < count; i++) {
-        printf("%d - %d \t%d\n", result[i].u, result[i].v, result[i].weight);
-    }
-    printf("Total Cost = %d\n", total);
-}
-
-int main() {
-    int V;
-    int graph[MAX][MAX];
-    struct Edge edges[MAX];
-    int E = 0;
-
-    printf("Enter number of vertices: ");
-    scanf("%d", &V);
-
-    printf("Enter adjacency matrix (0 if no edge):\n");
-    for (int i = 0; i < V; i++) {
-        for (int j = 0; j < V; j++) {
-            scanf("%d", &graph[i][j]);
-            // Only add each edge once (i < j)
-            if (i < j && graph[i][j] != 0) {
-                edges[E].u = i;
-                edges[E].v = j;
-                edges[E].weight = graph[i][j];
-                E++;
+        for(i = 0; i < n; i++)
+        {
+            for(j = 0; j < n; j++)
+            {
+                if(cost[i][j] < min)
+                {
+                    min = cost[i][j];
+                    a = u = i;
+                    b = v = j;
+                }
             }
         }
+
+        u = find(u);
+        v = find(v);
+
+        if(u != v)
+        {
+            printf("%d edge (%d,%d) = %d\n", ne++, a, b, min);
+            mincost += min;
+            union_set(u, v);
+        }
+
+        cost[a][b] = cost[b][a] = 999;
     }
 
-    kruskal(edges, V, E);
+    printf("Minimum cost = %d\n", mincost);
+}
+
+int main()
+{
+    int n, cost[10][10];
+    int i, j;
+
+    printf("Enter number of vertices: ");
+    scanf("%d", &n);
+
+    printf("Enter cost matrix:\n");
+    for(i = 0; i < n; i++)
+    {
+        for(j = 0; j < n; j++)
+        {
+            scanf("%d", &cost[i][j]);
+
+            if(cost[i][j] == 0)
+                cost[i][j] = 999;
+        }
+    }
+
+    kruskal(cost, n);
 
     return 0;
 }

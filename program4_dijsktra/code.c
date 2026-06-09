@@ -1,79 +1,66 @@
-#include <stdio.h>
-#include <limits.h>
+#include<stdio.h>
 
 #define MAX 100
+#define INF 9999
 
+int cost[MAX][MAX], dist[MAX], visited[MAX], n;
 
-int minDistance(int dist[], int visited[], int n) {
-    int min = INT_MAX, min_index = -1;
+void dijkstra(int start) {
+    int i, j, min, u;
 
-    for (int i = 0; i < n; i++) {
-        if (!visited[i] && dist[i] < min) {
-            min = dist[i];
-            min_index = i;
-        }
-    }
-    return min_index;
-}
-
-
-void printSolution(int dist[], int n) {
-    printf("\nVertex\tDistance from Source\n");
-    for (int i = 0; i < n; i++) {
-        printf("%d\t%d\n", i, dist[i]);
-    }
-}
-
-
-void dijkstra(int graph[MAX][MAX], int n, int src) {
-    int dist[MAX], visited[MAX];
-
-    
-    for (int i = 0; i < n; i++) {
-        dist[i] = INT_MAX;
+    for(i = 0; i < n; i++) {
+        dist[i] = cost[start][i];
         visited[i] = 0;
     }
 
-    dist[src] = 0;
+    dist[start] = 0;
+    visited[start] = 1;
 
-   
-    for (int count = 0; count < n - 1; count++) {
-        int u = minDistance(dist, visited, n);
-        if (u == -1) break;
+    for(i = 1; i < n; i++) {
+        min = INF;
+
+        for(j = 0; j < n; j++) {
+            if(!visited[j] && dist[j] < min) {
+                min = dist[j];
+                u = j;
+            }
+        }
 
         visited[u] = 1;
 
-        for (int v = 0; v < n; v++) {
-            if (!visited[v] && graph[u][v] != 0 &&
-                dist[u] != INT_MAX &&
-                dist[u] + graph[u][v] < dist[v]) {
-
-                dist[v] = dist[u] + graph[u][v];
+        for(j = 0; j < n; j++) {
+            if(!visited[j] && (min + cost[u][j] < dist[j])) {
+                dist[j] = min + cost[u][j];
             }
         }
     }
-
-    printSolution(dist, n);
 }
 
-
 int main() {
-    int n, graph[MAX][MAX], source;
+    int i, j, start;
 
     printf("Enter number of vertices: ");
     scanf("%d", &n);
 
-    printf("Enter adjacency matrix (enter 0 if no edge):\n");
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-            scanf("%d", &graph[i][j]);
+    printf("Enter cost matrix:\n");
+    for(i = 0; i < n; i++) {
+        for(j = 0; j < n; j++) {
+            scanf("%d", &cost[i][j]);
+
+            if(cost[i][j] == 0 && i != j)
+                cost[i][j] = INF;
         }
     }
 
-    printf("Enter source vertex (0 to %d): ", n - 1);
-    scanf("%d", &source);
+    printf("Enter starting vertex: ");
+    scanf("%d", &start);
 
-    dijkstra(graph, n, source);
+    dijkstra(start);
+
+    printf("\nShortest distances from vertex %d:\n", start);
+    for(i = 0; i < n; i++) {
+        printf("To %d = %d\n", i, dist[i]);
+    }
 
     return 0;
 }

@@ -1,66 +1,62 @@
 #include <stdio.h>
-#include <stdlib.h>   // for rand() and srand()
-#include <time.h>
 
-void swap(int *a, int *b) {
-    int temp = *a;
-    *a = *b;
-    *b = temp;
-}
+int partition(int a[], int low, int high)
+{
+    int pivot = a[low];
+    int i = low + 1;
+    int j = high;
 
-int partition(int A[], int low, int high) {
-    int pivot = A[high];
-    int i = low - 1;
-
-    for (int j = low; j < high; j++) {
-        if (A[j] <= pivot) {
+    while (i <= j)
+    {
+        while (i <= high && a[i] <= pivot)
             i++;
-            swap(&A[i], &A[j]);
+
+        while (a[j] > pivot)
+            j--;
+
+        if (i < j)
+        {
+            int temp = a[i];
+            a[i] = a[j];
+            a[j] = temp;
         }
     }
 
-    swap(&A[i + 1], &A[high]);
-    return i + 1;
+    a[low] = a[j];
+    a[j] = pivot;
+
+    return j;
 }
 
-void quickSort(int A[], int low, int high) {
-    if (low < high) {
-        int pi = partition(A, low, high);
-        quickSort(A, low, pi - 1);
-        quickSort(A, pi + 1, high);
+void quicksort(int a[], int low, int high)
+{
+    if (low < high)
+    {
+        int j = partition(a, low, high);
+
+        quicksort(a, low, j - 1);
+        quicksort(a, j + 1, high);
     }
 }
 
-int main() {
-    int N;
+int main()
+{
+    int n;
+
     printf("Enter number of elements: ");
-    scanf("%d", &N);
+    scanf("%d", &n);
 
-    int A[N];
+    int a[n];
 
-    // Seed random number generator
-    srand(time(NULL));
+    printf("Enter elements:\n");
+    for (int i = 0; i < n; i++)
+        scanf("%d", &a[i]);
 
-    // Generate random elements
-    printf("Generated elements:\n");
-    for (int i = 0; i < N; i++) {
-        A[i] = rand() % 1000;  // numbers between 0 and 999
-        printf("%d ", A[i]);
-    }
+    quicksort(a, 0, n - 1);
 
-    clock_t start = clock();
-
-    quickSort(A, 0, N - 1);
-
-    clock_t end = clock();
-
-    printf("\n\nSorted array:\n");
-    for (int i = 0; i < N; i++) {
-        printf("%d ", A[i]);
-    }
-
-    double time_taken = ((double)(end - start)) / CLOCKS_PER_SEC;
-    printf("\nTime taken: %f seconds\n", time_taken);
+    printf("Sorted array:\n");
+    for (int i = 0; i < n; i++)
+        printf("%d ", a[i]);
 
     return 0;
 }

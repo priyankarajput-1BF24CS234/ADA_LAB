@@ -3,12 +3,13 @@
 #define MAX 100
 #define INF 9999
 
-int cost[MAX][MAX], dist[MAX], visited[MAX], n;
-
-void dijkstra(int start) {
+void dijkstra(int cost[MAX][MAX], int dist[], int visited[],
+              int n, int start)
+{
     int i, j, min, u;
 
-    for(i = 0; i < n; i++) {
+    for(i = 0; i < n; i++)
+    {
         dist[i] = cost[start][i];
         visited[i] = 0;
     }
@@ -16,11 +17,14 @@ void dijkstra(int start) {
     dist[start] = 0;
     visited[start] = 1;
 
-    for(i = 1; i < n; i++) {
+    for(i = 1; i < n; i++)
+    {
         min = INF;
 
-        for(j = 0; j < n; j++) {
-            if(!visited[j] && dist[j] < min) {
+        for(j = 0; j < n; j++)
+        {
+            if(!visited[j] && dist[j] < min)
+            {
                 min = dist[j];
                 u = j;
             }
@@ -28,23 +32,34 @@ void dijkstra(int start) {
 
         visited[u] = 1;
 
-        for(j = 0; j < n; j++) {
-            if(!visited[j] && (min + cost[u][j] < dist[j])) {
+        for(j = 0; j < n; j++)
+        {
+            if(!visited[j] &&
+               min + cost[u][j] < dist[j])
+            {
                 dist[j] = min + cost[u][j];
             }
         }
     }
 }
 
-int main() {
-    int i, j, start;
+int main()
+{
+    int cost[MAX][MAX];
+    int dist[MAX];
+    int visited[MAX];
+    int n, start;
+    int i, j;
 
     printf("Enter number of vertices: ");
     scanf("%d", &n);
 
     printf("Enter cost matrix:\n");
-    for(i = 0; i < n; i++) {
-        for(j = 0; j < n; j++) {
+
+    for(i = 0; i < n; i++)
+    {
+        for(j = 0; j < n; j++)
+        {
             scanf("%d", &cost[i][j]);
 
             if(cost[i][j] == 0 && i != j)
@@ -55,10 +70,12 @@ int main() {
     printf("Enter starting vertex: ");
     scanf("%d", &start);
 
-    dijkstra(start);
+    dijkstra(cost, dist, visited, n, start);
 
     printf("\nShortest distances from vertex %d:\n", start);
-    for(i = 0; i < n; i++) {
+
+    for(i = 0; i < n; i++)
+    {
         printf("To %d = %d\n", i, dist[i]);
     }
 

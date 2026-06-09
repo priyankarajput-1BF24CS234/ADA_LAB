@@ -1,71 +1,62 @@
 #include <stdio.h>
-#include <limits.h>
+#define INF 999
 
-#define MAX 100
-
-int minKey(int key[], int mstSet[], int V) {
-    int min = INT_MAX, min_index;
-
-    for (int v = 0; v < V; v++) {
-        if (mstSet[v] == 0 && key[v] < min) {
-            min = key[v];
-            min_index = v;
-        }
-    }
-    return min_index;
-}
-
-void printMST(int parent[], int graph[MAX][MAX], int V) {
-    int total = 0;
-    printf("Edge \tWeight\n");
-
-    for (int i = 1; i < V; i++) {
-        printf("%d - %d \t%d\n", parent[i], i, graph[i][parent[i]]);
-        total += graph[i][parent[i]];
-    }
-    printf("Total Cost = %d\n", total);
-}
-
-void primMST(int graph[MAX][MAX], int V) {
-    int parent[MAX], key[MAX], mstSet[MAX];
-
-    for (int i = 0; i < V; i++) {
-        key[i] = INT_MAX;
-        mstSet[i] = 0;
-    }
-
-    key[0] = 0;
-    parent[0] = -1;
-
-    for (int count = 0; count < V - 1; count++) {
-        int u = minKey(key, mstSet, V);
-        mstSet[u] = 1;
-
-        for (int v = 0; v < V; v++) {
-            if (graph[u][v] && mstSet[v] == 0 && graph[u][v] < key[v]) {
-                parent[v] = u;
-                key[v] = graph[u][v];
-            }
-        }
-    }
-
-    printMST(parent, graph, V);
-}
-
-int main() {
-    int V;
-    int graph[MAX][MAX];
+int main()
+{
+    int n, cost[10][10];
+    int visited[10] = {0};
+    int i, j, min, u, v;
+    int edge_count = 0;
+    int mincost = 0;
 
     printf("Enter number of vertices: ");
-    scanf("%d", &V);
+    scanf("%d", &n);
 
-    printf("Enter adjacency matrix (0 if no edge):\n");
-    for (int i = 0; i < V; i++) {
-        for (int j = 0; j < V; j++) {
-            scanf("%d", &graph[i][j]);
+    printf("Enter the cost matrix:\n");
+
+    for(i = 0; i < n; i++)
+    {
+        for(j = 0; j < n; j++)
+        {
+            scanf("%d", &cost[i][j]);
+
+            if(cost[i][j] == 0)
+                cost[i][j] = INF;
         }
     }
 
-    primMST(graph, V);
+    visited[0] = 1;
+
+    printf("Edges in Minimum Spanning Tree:\n");
+
+    while(edge_count < n - 1)
+    {
+        min = INF;
+
+        for(i = 0; i < n; i++)
+        {
+            if(visited[i])
+            {
+                for(j = 0; j < n; j++)
+                {
+                    if(!visited[j] && cost[i][j] < min)
+                    {
+                        min = cost[i][j];
+                        u = i;
+                        v = j;
+                    }
+                }
+            }
+        }
+
+        printf("%d -> %d  cost = %d\n", u, v, min);
+
+        visited[v] = 1;
+        mincost += min;
+        edge_count++;
+    }
+
+    printf("Minimum Cost = %d\n", mincost);
+
     return 0;
 }

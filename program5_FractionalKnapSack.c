@@ -10,29 +10,42 @@ int main()
 
     float w[20], p[20], ratio[20];
 
-    printf("Enter weights and profits:\n");
+    printf("Enter weight and profit of each item:\n");
 
     for(i = 0; i < n; i++)
     {
-        scanf("%f%f", &w[i], &p[i]);
+        scanf("%f %f", &w[i], &p[i]);
         ratio[i] = p[i] / w[i];
     }
 
-    
-    for(i = 0; i < n-1; i++)
-        for(j = i+1; j < n; j++)
+    // Sort items by decreasing profit/weight ratio
+    for(i = 0; i < n - 1; i++)
+    {
+        for(j = i + 1; j < n; j++)
+        {
             if(ratio[i] < ratio[j])
             {
-                float t;
-                t = ratio[i]; ratio[i] = ratio[j]; ratio[j] = t;
-                t = w[i]; w[i] = w[j]; w[j] = t;
-                t = p[i]; p[i] = p[j]; p[j] = t;
-            }
+                float temp;
 
-    printf("Enter Capacity: ");
+                temp = ratio[i];
+                ratio[i] = ratio[j];
+                ratio[j] = temp;
+
+                temp = w[i];
+                w[i] = w[j];
+                w[j] = temp;
+
+                temp = p[i];
+                p[i] = p[j];
+                p[j] = temp;
+            }
+        }
+    }
+
+    printf("Enter knapsack capacity: ");
     scanf("%f", &capacity);
 
-    
+    // Fill knapsack
     for(i = 0; i < n; i++)
     {
         if(capacity >= w[i])
@@ -47,7 +60,7 @@ int main()
         }
     }
 
-    printf("Maximum Profit = %.2f", profit);
+    printf("Maximum Profit = %.2f\n", profit);
 
     return 0;
 }
